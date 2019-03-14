@@ -20,6 +20,7 @@ class GildedRose {
             case "Aged Brie":                                   return new CheeseUpdate();
             case "Sulfuras, Hand of Ragnaros":                  return new LegendaryUpdate();
             case "Backstage passes to a TAFKAL80ETC concert":   return new ConcertTicket();
+            case "Conjured":                                    return new Conjured();
             default:                                            return new DefaultUpdate();
         }
     }
@@ -51,6 +52,13 @@ class ConcertTicket implements UpdateStrategy {
 }
 
 class DefaultUpdate implements UpdateStrategy {}
+
+class Conjured implements UpdateStrategy {
+    @Override
+    public void decreaseQuality(Item item) {
+        item.quality = Math.max(0, item.quality - (item.sellIn < 0 ? 4 : 2));
+    }
+}
 
 interface UpdateStrategy {
     default void update(Item item) {
