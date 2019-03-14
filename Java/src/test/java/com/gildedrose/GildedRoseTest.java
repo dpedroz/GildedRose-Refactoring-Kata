@@ -12,6 +12,7 @@ public class GildedRoseTest {
     Item agedBrie() { return new Item("Aged Brie", 2, 0); }
     Item sulfuras() { return new Item("Sulfuras, Hand of Ragnaros", 5, 80); }
     Item backstagePass() { return new Item("Backstage passes to a TAFKAL80ETC concert", 12, 20); }
+    Item conjured() { return new Item("Conjured", 5, 30); }
 
     @Test
     public void updateNormalItemOnce() {
@@ -86,6 +87,22 @@ public class GildedRoseTest {
     }
 
     @Test
+    public void updateConjured() {
+        GildedRose app = updateInventory(conjured(), 1);
+        assertEquals("Conjured", app.items[0].name);
+        assertEquals(4, app.items[0].sellIn);
+        assertEquals(28, app.items[0].quality);
+    }
+
+    @Test
+    public void updateConjuredAfterSellinDegrades() {
+        GildedRose app = updateInventory(conjured(), 6);
+        assertEquals("Conjured", app.items[0].name);
+        assertEquals(-1, app.items[0].sellIn);
+        assertEquals(16, app.items[0].quality);
+    }
+
+    @Test
     public void qualityShouldDegradeTwiceAsFastAfterSellinDate() {
         GildedRose app = updateInventory(normalItem(), 10);
         assertEquals(10, app.items[0].quality);
@@ -99,7 +116,7 @@ public class GildedRoseTest {
         assertEquals(0, app.items[0].quality);
     }
 
-    GildedRose updateInventory(Item item, int days) {
+    private GildedRose updateInventory(Item item, int days) {
         Item[] items = new Item[] { item };
         GildedRose app = new GildedRose(items);
         Stream.iterate(0, i -> i).limit(days).forEach(i -> app.updateQuality() );
