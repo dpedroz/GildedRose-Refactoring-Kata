@@ -14,6 +14,7 @@ object ItemUpdateStrategy {
     case "Aged Brie" => new CheeseStrategy()
     case "Sulfuras, Hand of Ragnaros" => new LegendaryStrategy()
     case "Backstage passes to a TAFKAL80ETC concert" => new BackstagePassStrategy()
+    case "Conjured" => new ConjuredStrategy()
     case _ => new DefaultStrategy()
   }
 }
@@ -43,9 +44,13 @@ class BackstagePassStrategy extends UpdateStrategy {
   }
 }
 
+class ConjuredStrategy extends UpdateStrategy {
+  override def decreaseQuality(item: Item) = item.quality = math.max(0, item.quality - (if (item.sellIn < 0) 4 else 2))
+}
+
 sealed trait UpdateStrategy {
 
-  def update(item: Item) = {
+  def update(item: Item): Unit = {
     decreaseSellIn(item)
     decreaseQuality(item)
   }

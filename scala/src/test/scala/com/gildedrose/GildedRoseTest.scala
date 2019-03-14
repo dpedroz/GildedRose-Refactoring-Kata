@@ -96,6 +96,24 @@ class GildedRoseSpec extends FlatSpec with Matchers {
     app.items(0).quality should equal(0)
   }
 
+  it should "properly update Conjured" in new Fixture {
+    var items = Array[Item](conjured)
+    val app = new GildedRose(items)
+    app.updateQuality()
+    app.items(0).name should equal("Conjured")
+    app.items(0).sellIn should equal(4)
+    app.items(0).quality should equal(28)
+  }
+
+  it should "properly update Conjured after sellIn degrades" in new Fixture {
+    var items = Array[Item](conjured)
+    val app = new GildedRose(items)
+    for (_ <- 1 to 6) { app.updateQuality() }
+    app.items(0).name should equal("Conjured")
+    app.items(0).sellIn should equal(-1)
+    app.items(0).quality should equal(16)
+  }
+
   it should "Once the sell by date has passed, Quality degrades twice as fast" in new Fixture {
     var items = Array[Item](normal)
     val app = new GildedRose(items)
@@ -117,5 +135,6 @@ class GildedRoseSpec extends FlatSpec with Matchers {
     val brie = new Item("Aged Brie", 2, 0)
     val sulfuras = new Item("Sulfuras, Hand of Ragnaros", 5, 80)
     val backstagePass = new Item("Backstage passes to a TAFKAL80ETC concert", 12, 20)
+    val conjured = new Item("Conjured", 5, 30)
   }
 }
